@@ -16,15 +16,16 @@ class AminoAcidLL {
     AminoAcidLL(String inCodon) {
         aminoAcid = AminoAcidResources.getAminoAcidFromCodon(inCodon);
         codons = AminoAcidResources.getCodonListForAminoAcid(aminoAcid);
+        counts = new int[codons.length];
         incrCodons(inCodon);
         next = null;
     }
 
 
     private void incrCodons(String inCodon) {
-        for (int i = 0; i < counts.length; i++) {
-            if (inCodon.equals(codons[i])) {
-                counts[i]++;
+        for (int i = 0; i < codons.length; i++) {
+            if (codons[i].equals(inCodon)) {
+                counts[i] += 1;
             }
         }
     }
@@ -38,11 +39,12 @@ class AminoAcidLL {
     private void addCodon(String inCodon) {
         if (aminoAcid == AminoAcidResources.getAminoAcidFromCodon(inCodon)) {
             incrCodons(inCodon);
-
         } else if (next != null) {
             next.addCodon(inCodon);
-        } else
+           // System.out.println("hello");
+        } else {
             next = new AminoAcidLL(inCodon);
+        }
     }
 
     /********************************************************************************************/
@@ -95,8 +97,20 @@ class AminoAcidLL {
     /********************************************************************************************/
     /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
     public char[] aminoAcidList() {
+        if (next == null) {
+            return new char[]{aminoAcid};
+        } else {
+            char[] a = next.aminoAcidList();
+            for (int i = 0; i < a.length + 1; i++) {
+                
+            }
+        }
         return new char[]{};
     }
+
+// char[] random name = new char [a.length + 1];
+    //loop
+    //return
 
     /********************************************************************************************/
     /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
@@ -108,6 +122,7 @@ class AminoAcidLL {
     /********************************************************************************************/
     /* recursively determines if a linked list is sorted or not */
     public boolean isSorted() {
+
         return false;
     }
 
@@ -115,9 +130,25 @@ class AminoAcidLL {
     /********************************************************************************************/
     /* Static method for generating a linked list from an RNA sequence */
     public static AminoAcidLL createFromRNASequence(String inSequence) {
-        return null;
+        AminoAcidLL head = new AminoAcidLL();
+        boolean test = true;
+        if (inSequence.substring(0, 3).charAt(0) == '*') {
+            head.addCodon(inSequence.substring(0, 3));
+            test = false;
+        } else {
+            head.addCodon(inSequence.substring(0, 3));
+        }
+            for (int i = 3; i < inSequence.length() - 2 && test; i += 3) {
+                System.out.println(inSequence.substring(i, i + 3));
+                if (inSequence.charAt(i) == '*') {
+                    test = false;
+                } else {
+                    head.addCodon(inSequence.substring(i, i + 3));
+                }
+            }
+        return head;
     }
-
+//str.substring(0, 2);
 
     /********************************************************************************************/
     /* sorts a list by amino acid character*/
