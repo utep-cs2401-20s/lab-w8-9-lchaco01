@@ -102,7 +102,7 @@ class AminoAcidLL {
         } else {
             char[] a = next.aminoAcidList();
             for (int i = 0; i < a.length + 1; i++) {
-                
+
             }
         }
         return new char[]{};
