@@ -80,50 +80,99 @@ class AminoAcidLL {
     /* Recursive method that finds the differences in **Amino Acid** counts.
      * the list *must* be sorted to use this method */
     public int aminoAcidCompare(AminoAcidLL inList) {
-        if (next == null) {
-
+        //check to she if it is sorted
+        if(!inList.isSorted()) {
+            inList.sort(inList);
         }
-        return 0;
+        //Checks to see if it is at the end of both lists
+        if (inList.next == null && next == null) {
+            return codonDiff(inList);
+        }
+        //Check to see if it is at the end of the Amino Acid
+        if (next == null) {
+            return inList.totalCount() + aminoAcidCompare(inList);
+        }
+
+        if (inList.next == null) {
+            return totalCount() + next.aminoAcidCompare(inList);
+        }
+        return totalDiff(inList) + next.aminoAcidCompare(inList.next);
     }
 
     /********************************************************************************************/
     /* Same ad above, but counts the codon usage differences
      * Must be sorted. */
     public int codonCompare(AminoAcidLL inList) {
-        return 0;
+        //Sends to sort if not sorted
+        if(!inList.isSorted()){
+            inList.sort(inList);
+        }
+        //Base case after going through the codons
+        if(inList.next == null && next == null) {
+            return codonDiff(inList);
+        }
+        //goes though the starting list
+        if(next == null) {
+            return inList.totalCount() + codonCompare(inList);
+        }
+        //goes through the list
+        if(inList.next == null) {
+            return totalCount() + codonCompare(inList);
+        }
+        return totalDiff(inList) + next.codonCompare(inList);
     }
- //somthing similiar to diff
 
     /********************************************************************************************/
     /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
     public char[] aminoAcidList() {
+        char[] ret;
+        //Checks to see if the list is complete
         if (next == null) {
             return new char[]{aminoAcid};
         } else {
+            //Adds to a new array if the list is not completed
             char[] a = next.aminoAcidList();
-            for (int i = 0; i < a.length + 1; i++) {
-
+            ret = new char[a.length + 1];
+            ret[0] = aminoAcid;
+            for (int i = 1; i < ret.length - 1; i++) {
+                ret[i] = a[i - 1];
             }
         }
-        return new char[]{};
+        return ret;
     }
-
-// char[] random name = new char [a.length + 1];
-    //loop
-    //return
 
     /********************************************************************************************/
     /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
     public int[] aminoAcidCounts() {
-        return new int[]{};
+        int[] total;
+        //this is the base case
+        if(next == null) {
+            return new int[totalCount()];
+        }
+        else {
+            //Adds to the counter
+            int[] a = next.aminoAcidCounts();
+            total = new int[a.length + 1];
+            total[0] = totalCount();
+            for (int i = 1; i < total.length; i++) {
+                total[i] = a[i];
+            }
+        }
+        return total;
     }
 
 
     /********************************************************************************************/
     /* recursively determines if a linked list is sorted or not */
     public boolean isSorted() {
+        if(next == null) {
+            return true;
+        }
+        if(aminoAcid > next.aminoAcid) {
+            return false;
+        }
 
-        return false;
+        return next.isSorted();
     }
 
 
@@ -132,6 +181,7 @@ class AminoAcidLL {
     public static AminoAcidLL createFromRNASequence(String inSequence) {
         AminoAcidLL head = new AminoAcidLL();
         boolean test = true;
+        //Checks if there is a star and breaks the loop
         if (inSequence.substring(0, 3).charAt(0) == '*') {
             head.addCodon(inSequence.substring(0, 3));
             test = false;
@@ -153,6 +203,20 @@ class AminoAcidLL {
     /********************************************************************************************/
     /* sorts a list by amino acid character*/
     public static AminoAcidLL sort(AminoAcidLL inList) {
-        return null;
+        //Checks if the list is empty
+        if(inList == null || inList.next == null) {
+            return inList;
+        }
+        char temp;
+        //selection sort method
+        for(AminoAcidLL i = inList; i.next != null; i = i.next) {
+            for(AminoAcidLL j = i.next; j != null; j = j.next) {
+                temp = i.aminoAcid;
+                i.aminoAcid = j.aminoAcid;
+                j.aminoAcid = temp;
+            }
+        }
+
+        return inList;
     }
-}
+    }
